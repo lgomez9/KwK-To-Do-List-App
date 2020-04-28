@@ -9,12 +9,17 @@
 import UIKit
 
 class ToDo {
-    var name = ""
+    var name : String
     var important = false
+    
+    init() {
+        self.name = ""
+    }
     
 //    Constructors for this class
     init(name: String) {
         self.name = name
+        
     }
     
     init(name: String, important: Bool) {
