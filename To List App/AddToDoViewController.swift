@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 class AddToDoViewController: UIViewController {
 
@@ -34,15 +35,36 @@ class AddToDoViewController: UIViewController {
     */
 
     @IBAction func addTapped(_ sender: Any) {
-        let toDo = ToDo()
+//        let toDo = ToDo()
+//
+//        if let titleText = titleTextField.text {
+//            toDo.name = titleText
+//            toDo.important = importantSwitch.isOn
+//        }
+//
+//        previousVC.toDos.append(toDo)
+//        previousVC.tableView.reloadData()
+//        navigationController?.popViewController(animated: true)
         
-        if let titleText = titleTextField.text {
-            toDo.name = titleText
-            toDo.important = importantSwitch.isOn
+        // This line creates a reference to AppDelegate so we can save our ToDos in Core Data.
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+            return
         }
         
-        previousVC.toDos.append(toDo)
-        previousVC.tableView.reloadData()
+        // Context is an extension of the reference to the Core Data
+        let context = appDelegate.persistentContainer.viewContext
+        
+        // This creates a new object in Core Data
+        let toDo = ToDoCD(context: context)
+        
+        // These lines give the the new CD object information based on what the user provided
+        toDo.name = titleTextField.text
+        toDo.important = importantSwitch.isOn
+        
+        // This is like clicking "save"! Our new object is now safe in Core Data!
+        appDelegate.saveContext()
+        
+        // This sends the user back to the Table View Controller
         navigationController?.popViewController(animated: true)
     }
 }

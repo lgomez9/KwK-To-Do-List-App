@@ -7,15 +7,16 @@
 //
 
 import UIKit
+import CoreData
 
 class ToDoTableViewController: UITableViewController {
 
-    var toDos : [ToDo] = []
+    var toDos : [ToDoCD] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        toDos = createToDos()
+        getToDos()
     }
 
     // MARK: - Table view data source
@@ -62,21 +63,24 @@ class ToDoTableViewController: UITableViewController {
         }
         
         if let completeVC = segue.destination as? CompleteToDoViewController {
-            if let toDo = sender as? ToDo {
+            if let toDo = sender as? ToDoCD {
                 completeVC.selectedToDo = toDo
                 completeVC.previousVC = self
             }
         }
     }
-    
-    
-    func createToDos() -> [ToDo] {
-        
-        let allTheLight = ToDo(name: "All the Light We Cannot See")
-        let washington = ToDo(name: "Washington Black")
-        let crimeAndPunishment = ToDo(name: "Crime and Punishment", important: true)
-        
-        return [allTheLight, washington, crimeAndPunishment]
+ 
+    func getToDos() {
+        if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
+            
+            if let coreDataToDos = try? context.fetch(ToDoCD.fetchRequest()) as? [ToDoCD] {
+                toDos = coreDataToDos
+                tableView.reloadData()
+            }
+        }
     }
-
+    
+    override func viewWillAppear(_ animated: Bool) {
+        getToDos()
+    }
 }
